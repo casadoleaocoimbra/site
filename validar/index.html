@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="pt">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="Senvido ao Senhor até que Ele venha!" />
+    <meta name="keywords" content="contribute,mobile,web,android,ios,desktop" />
+    <meta name="author" content="Casa do Leão Coimbra" />
+    <meta name="application-name" content="Casa do Leão Coimbra" />
+
+    <meta property="og:title" content="Casa do Leão Coimbra" />
+    <meta property="og:type" content="application" />
+    <meta property="og:url" content="https://www.casadoleaocoimbra.pt/" />
+    <meta property="og:description" content="Senvido ao Senhor até que Ele venha!" />
+
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:title" content="Casa do Leão - Coimbra" />
+    <meta property="twitter:description" content="Senvido ao Senhor até que Ele venha!" />
+
+    <meta property="business:contact_data:country_name" content="Portugal" />
+    <meta property="business:contact_data:website" content="https://www.casadoleaocoimbra.pt/" />
+    <meta property="business:contact_data:region" content="LB" />
+    <meta property="business:contact_data:email" content="coimbra.casadoleao@gmail.com" />
+    <meta property="business:contact_data:phone_number" content="+351928128216" />
+
+    <meta name="geo.placename" content="Coimbra" />
+    <meta name="geo.region" content="PT" />
+    <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900&display=swap"
+        rel="stylesheet" />
+
+    <title>Casa do Leão Coimbra</title>
+
+    <link rel="icon" sizes="192x192" href="../assets/images/icon-192px.png" type="image/png" />
+    <link rel="shortcut icon" href="../assets/images/icon-32px.png" type="image/png" />
+    <link rel="apple-touch-icon" href="../assets/images/icon-180px.png" type="image/png" />
+    <!-- Bootstrap core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <title>Leitor de QR Code (HTML + JS)</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, Roboto, "Segoe UI", "Helvetica Neue", Arial;
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+            align-items: flex-start;
+        }
+
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+            padding: 16px;
+            width: 520px;
+        }
+
+        .camera-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            border: 3px solid #333;
+            border-radius: 8px;
+            background: #000;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        canvas {
+            display: none;
+            width: 300px;
+            height: 300px;
+        }
+
+        .camera-frame {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            border: 2px solid #00ff00;
+            border-radius: 4px;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .camera-frame::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            border-radius: 8px;
+        }
+
+        .controls {
+            margin-top: 12px;
+            display: flex;
+            gap: 8px;
+        }
+
+        button {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            background: #fff;
+            cursor: pointer;
+        }
+
+        button.primary {
+            background: #111;
+            color: #fff;
+            border-color: #111;
+        }
+
+        button.validate {
+            background: #28a745;
+            color: #fff;
+            border-color: #28a745;
+        }
+
+        button.clear {
+            background: #3c3c3c;
+            color: #fff;
+            border-color: #3c3c3c;
+        }
+
+        pre {
+            white-space: pre-wrap;
+            word-break: break-word;
+            background: #f7f7f7;
+            padding: 8px;
+            border-radius: 8px;
+        }
+
+        .result {
+            margin-top: 12px;
+        }
+
+        .overlay {
+            position: relative;
+        }
+
+        .hint {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+        }
+
+        input[type=file] {
+            display: none;
+        }
+
+        label.filebtn {
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px dashed #bbb;
+            display: inline-block;
+        }
+
+        .success {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .error {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .info {
+            background-color: #f7f7f7;
+            color: black;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <h2>Leitor de QR Code</h2>
+        <div class="overlay">
+            <div class="camera-container">
+                <video id="video" playsinline></video>
+                <div class="camera-frame"></div>
+            </div>
+            <canvas id="canvas"></canvas>
+        </div>
+
+        <div class="controls">
+            <button id="start-btn" class="primary">Iniciar câmera</button>
+            <button id="stop-btn">Parar câmera</button>
+            <label class="filebtn" for="file-input">Abrir imagem</label>
+            <input id="file-input" type="file" accept="image/*">
+        </div>
+
+        <div class="hint">
+            <button id="copy-btn" class="validate" onclick="validar()">Validar</button>
+            <button id="clear-btn" class="clear" onclick="clearOutput()">Limpar</button>
+        </div>
+
+        <div class="result">
+            <h3>Resultado</h3>
+            <pre id="output" class="info">Nenhum QR detectado ainda.</pre>
+        </div>
+    </div>
+
+    <!-- Biblioteca jsQR (CDN) -->
+    <script src="https://unpkg.com/jsqr/dist/jsQR.js"></script>
+    <script>
+        // Elementos
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const output = document.getElementById('output');
+        const start-btn = document.getElementById('start-btn');
+        const stop-btn = document.getElementById('stop-btn');
+        const file-input = document.getElementById('file-input');
+
+        let stream = null;
+        let scanning = false;
+
+        async function startCamera() {
+            clearOutput();
+            try {
+                // Setar tamanho do canvas 300x300 fixo
+                canvas.width = 300;
+                canvas.height = 300;
+                stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false });
+                video.srcObject = stream;
+                await video.play();
+                scanning = true;
+                tick();
+            } catch (err) {
+                console.error('Erro ao aceder à câmera:', err);
+                output.textContent = 'Erro: não foi possível aceder à câmera. ' + (err.message || err);
+            }
+        }
+
+        function stopCamera() {
+            scanning = false;
+            if (stream) {
+                stream.getTracks().forEach(t => t.stop());
+                stream = null;
+            }
+            video.pause();
+            video.srcObject = null;
+        }
+
+        function drawLine(begin, end, color) {
+            ctx.beginPath();
+            ctx.moveTo(begin.x, begin.y);
+            ctx.lineTo(end.x, end.y);
+            ctx.lineWidth = 4;
+            ctx.strokeStyle = color;
+            ctx.stroke();
+        }
+
+        function tick() {
+            if (!scanning) return;
+            if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: 'attemptBoth' });
+
+                if (code) {
+                    // Desenha caixa ao redor
+                    drawLine(code.location.topLeftCorner, code.location.topRightCorner, '#FF3B58');
+                    drawLine(code.location.topRightCorner, code.location.bottomRightCorner, '#FF3B58');
+                    drawLine(code.location.bottomRightCorner, code.location.bottomLeftCorner, '#FF3B58');
+                    drawLine(code.location.bottomLeftCorner, code.location.topLeftCorner, '#FF3B58');
+
+                    output.textContent = code.data;
+                } else {
+                    output.textContent = 'Nenhum QR detectado.';
+                }
+            }
+            requestAnimationFrame(tick);
+        }
+
+        async function validar() {
+            const codigo = output.textContent.trim();
+            if (codigo && codigo !== 'Nenhum QR detectado.' && codigo !== 'Não foi possível detectar QR nessa imagem.') {
+                // Redirecionar para página de validação com o código como parâmetro
+                const response = await fetch(`/validar/validar.php?code=${encodeURIComponent(codigo)}`);
+                const result = await response.text();
+                output.textContent = result;
+                // Verivicar se o código foi validado com sucesso
+                if (result.includes('Sucesso:')) {
+                    output.textContent = '✅ ' + output.textContent;
+                    // Setar background e foreground css para indicar sucesso
+                    output.className = 'success';
+                } else {
+                    output.textContent = '❌ ' + output.textContent;
+                    // Setar background e foreground css para indicar erro
+                    output.className = 'error';
+                }
+            } else {
+                output.textContent = 'Erro: Nenhum código válido para validar.';
+                output.className = 'error';
+            }
+            // Limpar câmera após validação
+            stopCamera();
+        }
+
+        function clearOutput() {
+            output.textContent = 'Nenhum QR detectado ainda.';
+            output.className = 'info';
+        }
+
+        // Carregar imagem do disco e tentar decodificar
+        file-input.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const img = new Image();
+            const url = URL.createObjectURL(file);
+            img.onload = () => {
+                canvas.width = img.naturalWidth;
+                canvas.height = img.naturalHeight;
+                ctx.drawImage(img, 0, 0);
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: 'attemptBoth' });
+                if (code) {
+                    output.textContent = code.data;
+                } else {
+                    output.textContent = 'Não foi possível detectar QR nessa imagem.';
+                }
+                URL.revokeObjectURL(url);
+            };
+            img.onerror = () => {
+                output.textContent = 'Erro ao carregar imagem.';
+                URL.revokeObjectURL(url);
+            };
+            img.src = url;
+        });
+
+        // Botões
+        start-btn.addEventListener('click', () => startCamera());
+        stop-btn.addEventListener('click', () => stopCamera());
+
+        // Limpar ao fechar a página
+        window.addEventListener('beforeunload', () => stopCamera());
+    </script>
+</body>
+
+</html>

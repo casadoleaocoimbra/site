@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Pagamento via Easypay (MB WAY)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    />
+  </head>
+  <body class="p-4 bg-light">
+    <div class="container bg-white p-5 rounded shadow">
+      <h2 class="mb-4 text-center">Contribuição / Pagamento</h2>
+
+      <form id="mbWayForm" class="mb-3">
+        <div class="mb-3">
+          <label for="name" class="form-label">Nome</label>
+          <input
+            id="name"
+            name="name"
+            type="text"
+            class="form-control"
+            required
+          />
+        </div>
+
+        <div class="mb-3">
+          <label for="phone" class="form-label">Número de Telefone</label>
+          <input
+            id="phone"
+            name="phone"
+            type="tel"
+            class="form-control"
+            required
+            maxlength="9"
+            pattern="[0-9]+"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label for="amount" class="form-label">Escreva um Valor (€)</label>
+          <input
+            id="amount"
+            name="amount"
+            type="number"
+            class="form-control"
+            required
+            step="0.01"
+          />
+        </div>
+
+        <div class="mb-3 text-center">
+          <span class="d-block mb-2">Ou selecione uma opção abaixo:</span>
+          <div class="btn-group">
+            <button
+              type="button"
+              class="btn btn-outline-primary"
+              onclick="setValue(10)"
+            >
+              €10
+            </button>
+            <button
+              type="button"
+              class="btn btn-outline-primary"
+              onclick="setValue(30)"
+            >
+              €30
+            </button>
+            <button
+              type="button"
+              class="btn btn-outline-primary"
+              onclick="setValue(50)"
+            >
+              €50
+            </button>
+            <button
+              type="button"
+              class="btn btn-outline-primary"
+              onclick="setValue(100)"
+            >
+              €100
+            </button>
+            <button
+              type="button"
+              class="btn btn-outline-primary"
+              onclick="setValue(500)"
+            >
+              €500
+            </button>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="description" class="form-label">Descrição</label>
+          <select id="description" name="description" class="form-select">
+            <option value="Dízimos e Ofertas">Dízimos e Ofertas</option>
+            <option value="Primícias">Primícias</option>
+            <option value="Livraria">Livraria</option>
+            <option value="Retiro Kids">Retiro Kids</option>
+            <option value="Outros">Outros</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">Confirmar</button>
+        <div id="loading" class="text-center mt-3" style="display: none">
+          <i class="fa fa-spinner fa-spin"></i> Processando pagamento...
+        </div>
+      </form>
+
+      <div id="result" class="alert d-none"></div>
+    </div>
+
+    <script>
+      function setValue(v) {
+        document.getElementById("amount").value = v;
+      }
+
+      document
+        .getElementById("mbWayForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const loading = document.getElementById("loading");
+          const result = document.getElementById("result");
+          loading.style.display = "block";
+          result.classList.add("d-none");
+
+          const payload = {
+            name: document.getElementById("name").value,
+            phone: document.getElementById("phone").value,
+            amount: parseFloat(document.getElementById("amount").value),
+            description: document.getElementById("description").value,
+          };
+
+          const res = await fetch("create-mbway-payment.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+
+          const data = await res.json();
+          loading.style.display = "none";
+
+          if (data.success) {
+            result.className = "alert alert-success";
+            result.innerText =
+              "Pedido MB WAY enviado com sucesso! Confirme no seu telemóvel.";
+          } else {
+            result.className = "alert alert-danger";
+            result.innerText = "Erro: " + (data.error || "Falha no pedido");
+          }
+
+          result.classList.remove("d-none");
+        });
+    </script>
+  </body>
+</html>
