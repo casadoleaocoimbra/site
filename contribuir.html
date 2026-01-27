@@ -357,8 +357,8 @@
 
     // Submit form programmatically
     function submitForm() {
-      const submit-btn = document.getElementById("submit-btn");
-      if (submit - btn.style.pointerEvents === "none") {
+      const submit_btn = document.getElementById("submit-btn");
+      if (submit_btn.style.pointerEvents === "none") {
         return; // Prevent submission if button is disabled
       }
       processPayment();
@@ -366,7 +366,7 @@
 
     // Function to validate form and enable/disable submit button
     function validateForm() {
-      const submit-btn = document.getElementById("submit-btn");
+      const submit_btn = document.getElementById("submit-btn");
       const name = document.getElementById("name").value.trim();
       const email = document.getElementById("email").value.trim();
       const phone = document.getElementById("phone").value.trim();
@@ -382,14 +382,14 @@
 
       if (isFormValid) {
         // Enable submit button
-        submit - btn.style.opacity = "1";
-        submit - btn.style.pointerEvents = "auto";
-        submit - btn.style.cursor = "pointer";
+        submit_btn.style.opacity = "1";
+        submit_btn.style.pointerEvents = "auto";
+        submit_btn.style.cursor = "pointer";
       } else {
         // Disable submit button
-        submit - btn.style.opacity = "0.5";
-        submit - btn.style.pointerEvents = "none";
-        submit - btn.style.cursor = "not-allowed";
+        submit_btn.style.opacity = "0.5";
+        submit_btn.style.pointerEvents = "none";
+        submit_btn.style.cursor = "not-allowed";
       }
     }
 
@@ -415,18 +415,18 @@
       });
 
     async function processPayment() {
-      const submit-btn = document.getElementById("submit-btn");
+      const submit_btn = document.getElementById("submit-btn");
       const loading = document.getElementById("loading");
       const result = document.getElementById("result");
 
       // Prevent double submission
-      if (submit - btn.style.pointerEvents === "none") {
+      if (submit_btn.style.pointerEvents === "none") {
         return;
       }
 
       // Disable submit button and show loading
-      submit - btn.style.pointerEvents = "none";
-      submit - btn.style.opacity = "0.5";
+      submit_btn.style.pointerEvents = "none";
+      submit_btn.style.opacity = "0.5";
       loading.style.display = "block";
       result.classList.add("d-none");
 
@@ -464,16 +464,16 @@
                 clearInterval(interval);
                 result.innerText = "✅ Pagamento confirmado!";
                 // Re-enable form for new payment
-                submit - btn.style.pointerEvents = "none";
-                submit - btn.style.opacity = "0.5";
+                submit_btn.style.pointerEvents = "none";
+                submit_btn.style.opacity = "0.5";
               } else if (["failed", "cancelled", "canceled"].includes(st.status)) {
                 clearInterval(interval);
                 const messages = st.messages ? st.messages : "";
                 result.className = "alert alert-danger";
                 result.innerText = "❌ Pagamento falhou\n" + messages;
                 // Re-enable form for retry
-                submit - btn.style.pointerEvents = "auto";
-                submit - btn.style.opacity = "1";
+                submit_btn.style.pointerEvents = "auto";
+                submit_btn.style.opacity = "1";
               }
             } catch (statusError) {
               console.error("Error checking payment status:", statusError);
@@ -483,16 +483,16 @@
           result.className = "alert alert-danger";
           result.innerText = "❗ " + (data.error || "Falha no pedido");
           // Re-enable form for retry
-          submit - btn.style.pointerEvents = "auto";
-          submit - btn.style.opacity = "1";
+          submit_btn.style.pointerEvents = "auto";
+          submit_btn.style.opacity = "1";
         }
       } catch (error) {
         console.error("Payment error:", error);
         result.className = "alert alert-danger";
         result.innerText = "❗ Erro de conexão. Tente novamente.";
         // Re-enable form for retry
-        submit - btn.style.pointerEvents = "auto";
-        submit - btn.style.opacity = "1";
+        submit_btn.style.pointerEvents = "auto";
+        submit_btn.style.opacity = "1";
       } finally {
         loading.style.display = "none";
         result.classList.remove("d-none");
