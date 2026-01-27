@@ -1,0 +1,24 @@
+{
+  "name": "PHP 8.2",
+  "image": "mcr.microsoft.com/devcontainers/php:8.2",
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {}
+  },
+  "forwardPorts": [80, 443, 8000],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "felixbecker.php-debug",
+        "felixbecker.php-intellisense",
+        "bmewburn.vscode-intelephense-client"
+      ],
+      "settings": {
+        "php.validate.executablePath": "/usr/local/bin/php",
+        "[php]": {
+          "editor.defaultFormatter": "bmewburn.vscode-intelephense-client"
+        }
+      }
+    }
+  },
+  "remoteUser": "root"
+}
