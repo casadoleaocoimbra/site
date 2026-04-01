@@ -398,7 +398,6 @@
     document.addEventListener("DOMContentLoaded", function () {
       const form = document.getElementById("contribute-form");
       const inputs = form.querySelectorAll("input, select");
-      const amountInput = document.getElementById("amount");
 
       // Initial validation
       validateForm();
@@ -407,21 +406,6 @@
       inputs.forEach(input => {
         input.addEventListener("input", validateForm);
         input.addEventListener("change", validateForm);
-      });
-
-      // Format amount field: replace comma with dot
-      amountInput.addEventListener("input", function () {
-        this.value = this.value.replace(",", ".");
-      });
-
-      // Format amount field: add .00 when blur and value is integer
-      amountInput.addEventListener("blur", function () {
-        if (this.value) {
-          let value = parseFloat(this.value);
-          if (!isNaN(value)) {
-            this.value = value.toFixed(2);
-          }
-        }
       });
     });
 
