@@ -354,6 +354,7 @@
     //set the cleared flags
     function setValue(v) {
       document.getElementById("amount").value = v;
+      validateForm(); // Re-validate form after setting value
     }
 
     // Submit form programmatically
